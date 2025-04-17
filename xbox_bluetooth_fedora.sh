@@ -2,7 +2,7 @@
 
 ################################################################################
 # xbox_bluetooth_auto_connect_fedora.sh
-# Version : 2.0
+# Version : 2.1
 # Description : Script intelligent et autonome pour connecter automatiquement une
 #               manette Xbox Bluetooth sous Fedora.
 ################################################################################
@@ -105,10 +105,14 @@ scan_for_controller() {
 }
 
 pair_and_trust() {
+  log INFO "Préparation de l'agent Bluetooth..."
+
+  # Lancer l'agent dans une session dédiée pour éviter l'erreur "No agent is registered"
+  echo -e "agent NoInputNoOutput\ndefault-agent" | bluetoothctl >> "$LOG_FILE"
+  sleep 1
+
   log INFO "Appairage avec la manette ($XBOX_MAC) ..."
   bluetoothctl <<EOF
-agent NoInputNoOutput
-default-agent
 power on
 scan off
 pair $XBOX_MAC
